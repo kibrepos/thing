@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>breaktime b4 proj</title>
+  <style>
+    /* Basic Styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #282c34;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Button Style */
+    #openButton {
+      padding: 15px 30px;
+      font-size: 1.5em;
+      cursor: pointer;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    #openButton:hover {
+      transform: scale(1.1);
+      background-color: #ff8f82;
+    }
+
+    /* Greeting Message Style */
+    #greeting {
+      display: none;
+      font-size: 2em;
+      color: #FFDD00;
+      text-align: center;
+      transition: opacity 0.5s ease-in-out;
+      opacity: 0;
+      position: absolute;
+    }
+
+    /* Present Style */
+    #present {
+      display: none;
+      font-size: 3em;
+      cursor: pointer;
+      color: #FFD700;
+      animation: bounce 1s infinite alternate;
+    }
+
+    /* Confetti Style */
+    .confetti {
+      position: absolute;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      background-color: #FFDD00;
+      animation: fall 3s linear;
+    }
+
+    /* Confetti Animation */
+    @keyframes fall {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+    }
+
+    /* Bounce Animation for Present */
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    /* Out of Confetti Message */
+    #outOfConfetti {
+      display: none;
+      font-size: 2em;
+      color: #FF6F61;
+      text-align: center;
+      position: absolute;
+      top: 60%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Button, Greeting Message, Present, and Out of Confetti Message -->
+  <button id="openButton">press me</button>
+  <div id="greeting">🎉 Happy Birthday! 🎉</div>
+  <div id="present">🎁</div>
+  <div id="outOfConfetti">ubos na confetti 😢</div>
+
+  <script>
+    // Elements
+    const openButton = document.getElementById("openButton");
+    const greeting = document.getElementById("greeting");
+    const present = document.getElementById("present");
+    const outOfConfetti = document.getElementById("outOfConfetti");
+
+    // Messages to cycle through
+    const messages = [
+      "Happy Birthday! ✨🥳🎉",
+      "Hope you have a great day 😎👍",
+      " Open this ➡️➡️"
+    ];
+
+    let messageIndex = 0;
+    let cycleCount = 0;
+    let clickCount = 0; // Track the number of present clicks
+
+    // Function to show and cycle messages
+    function cycleMessages() {
+      greeting.style.opacity = 0; // Fade out
+
+      setTimeout(() => {
+        greeting.textContent = messages[messageIndex]; // Update text
+        greeting.style.opacity = 1; // Fade in
+        messageIndex++;
+
+        // Check if all messages have cycled through once
+        if (messageIndex >= messages.length) {
+          messageIndex = 0;
+          cycleCount++;
+
+          // Show the present after one full cycle of messages
+          if (cycleCount === 1) {
+            setTimeout(() => {
+              greeting.style.display = "none"; // Hide greeting
+              present.style.display = "block"; // Show present
+            }, 1000); // Delay before showing the present
+          }
+        }
+      }, 500); // Fade duration
+    }
+
+    // Show greeting and start message cycle
+    openButton.addEventListener("click", () => {
+      openButton.style.display = "none"; // Hide button
+      greeting.style.display = "block"; // Show greeting
+
+      // Start cycling messages every 2 seconds
+      setInterval(cycleMessages, 2000);
+      cycleMessages(); // Show first message immediately
+    });
+
+    // Show confetti when present is clicked, up to 5 times
+    present.addEventListener("click", () => {
+      clickCount++;
+
+      if (clickCount <= 5) {
+        generateConfetti();
+      }
+
+      if (clickCount === 10) {
+        present.style.display = "none"; // Hide present after 5 clicks
+        outOfConfetti.style.display = "block"; // Show "out of confetti" message
+      }
+    });
+
+    // Function to generate confetti
+    function generateConfetti() {
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = `${Math.random() * window.innerWidth}px`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
+        document.body.appendChild(confetti);
+
+        // Remove confetti after animation
+        confetti.addEventListener("animationend", () => {
+          confetti.remove();
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>
